@@ -1,8 +1,6 @@
-Jade - Emotion model appication
+Jadex - Emotion model appication
 
-This application shows how JADE (Java Agent Development Agent) can be used to model emotions and solve complex problems
-using a multi-agent environment. The code consists of some samples for basic JADE applications and the main (complex)
-application itself.
+This application shows how JADEx  can be used to model emotions and solve complex problems using a multi-agent environment. The code consists of some samples for basic jadex applications. The model behind this entire application is the BDI agents model (belief-desire-intention).
 
 
 Documentation
