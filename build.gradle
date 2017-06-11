@@ -1,0 +1,30 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+dependencies {
+    compile 'org.activecomponents.jadex:jadex-distribution-standard:3.0.69'
+}
+
+jar {
+    baseName = 'jadex-emotions'
+    version = '0.1.0'
+    manifest {
+        attributes(
+                "Class-Path": configurations.compile.collect { it.getName() }.join(' '),
+                "Main-Class": 'com.cristis.emotions.treasureisland.StartTreasureHunter'
+        )
+    }
+}
+
+
+sourceSets.main.resources.srcDirs = [ "src/main/java" ]
+sourceSets.main.resources.includes = [ "**/*.png",
+                                       "**/*.jpg",
+                                       "**/*.agent.xml",
+                                       "**/*.application.xml"]
