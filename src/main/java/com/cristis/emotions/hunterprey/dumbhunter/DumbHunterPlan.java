@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.cristis.emotions.hunterprey.MoveAction;
+import jadex.bdiv3.annotation.PlanAPI;
+import jadex.bdiv3.annotation.PlanCapability;
+import jadex.bdiv3.runtime.IPlan;
 import jadex.bdiv3x.runtime.Plan;
 import jadex.commons.future.DelegationResultListener;
 import jadex.commons.future.Future;

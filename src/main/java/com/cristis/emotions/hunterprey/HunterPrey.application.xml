@@ -190,9 +190,9 @@
 					<env:property name="percepttypes">
 						new Object[]
 						{
-							new String[]{"food_seen", "set", "nearest_food", "isNearer"},
-							new String[]{"food_eaten", "unset", "nearest_food", "isFact"},
-							new String[]{"food_out_of_sight", "unset", "nearest_food", "isFact"}
+							new String[]{"food_seen", "set", "nearest_food"},
+							new String[]{"food_eaten", "unset", "nearest_food"},
+							new String[]{"food_out_of_sight", "unset", "nearest_food"}
 						}
 					</env:property>
 					<env:property name="isNearer" dynamic="true">
@@ -310,13 +310,35 @@
 	</extensiontypes>
 
 	<componenttypes>
-		<componenttype name="DumbPrey" filename="jadex/bdi/examples/hunterprey/dumbprey/DumbPrey.agent.xml"/>
-		<componenttype name="CleverPrey" filename="jadex/bdi/examples/hunterprey/cleverprey/CleverPrey.agent.xml"/>
-		<componenttype name="DumbHunter" filename="jadex/bdi/examples/hunterprey/dumbhunter/DumbHunter.agent.xml"/>
-		<componenttype name="LAHunter" filename="jadex/bdi/examples/hunterprey/ldahunter/LAHunter.agent.xml"/>
+		<componenttype name="DumbPrey" filename="com/cristis/emotions/hunterprey/dumbprey/DumbPreyBDI.class"/>
+		<componenttype name="CleverPrey" filename="com/cristis/emotions/hunterprey/cleverprey/CleverPrey.agent.xml"/>
+		<componenttype name="DumbHunter" filename="com/cristis/emotions/hunterprey/dumbhunter/DumbHunter.agent.xml"/>
+		<componenttype name="LAHunter" filename="com/cristis/emotions/hunterprey/ldahunter/LAHunter.agent.xml"/>
 	</componenttypes>
 
 	<configurations>
+		<configuration name="OneDumbSheep">
+			<extensions>
+				<env:envspace name="my2dspace" type="2dspace">
+					<env:objects>
+						<env:object type="obstacle" number="125"/>
+					</env:objects>
+
+					<env:processes>
+						<env:process type="create">
+							<env:property name="tickrate">5</env:property>
+						</env:process>
+					</env:processes>
+
+					<env:observers>
+						<env:observer name="HunterPrey World" dataview="view_all" perspective="icons" />
+					</env:observers>
+				</env:envspace>
+			</extensions>
+			<components>
+				<component type="DumbPrey" name="Dumbo"/>
+			</components>
+		</configuration>
 		<configuration name="Classic">
 			<extensions>
 				<env:envspace name="my2dspace" type="2dspace">
