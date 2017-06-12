@@ -34,7 +34,7 @@ public class EatAction extends SimplePropertyObject implements ISpaceAction
 	 * @param space the environment space
 	 * @return action return value
 	 */
-	public Object perform(Map parameters, IEnvironmentSpace space)
+	public  Object perform(Map parameters, IEnvironmentSpace space)
 	{
 		// System.out.println("eat action: "+parameters);
 

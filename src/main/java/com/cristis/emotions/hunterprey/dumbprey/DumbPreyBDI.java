@@ -5,6 +5,9 @@ import jadex.bdiv3.annotation.*;
 import jadex.bdiv3.features.IBDIAgentFeature;
 import jadex.bdiv3.model.MProcessableElement;
 import jadex.bdiv3.runtime.ChangeEvent;
+import jadex.bdiv3.runtime.impl.PlanFailureException;
+import jadex.commons.future.Future;
+import jadex.commons.future.IFuture;
 import jadex.extension.envsupport.environment.ISpaceObject;
 import jadex.extension.envsupport.environment.space2d.Space2D;
 import jadex.extension.envsupport.math.IVector2;
@@ -19,20 +22,26 @@ import lombok.Setter;
  */
 @Agent
 @Plans({
-        @Plan(trigger = @Trigger(goals = DumbPreyBDI.Eat.class), body = @Body(DumbPreyEatPlan.class)),
-        @Plan(trigger = @Trigger(goals = DumbPreyBDI.Move.class), body = @Body(DumbPreyMovePlan.class))
+        @Plan(trigger = @Trigger(goals = DumbPreyBDI.TriggerFood.class), body = @Body(DumbPreyEatPlan.class)),
+        @Plan(trigger = @Trigger(goals = DumbPreyBDI.Check.class), body = @Body(DumbPreyCheckPlan.class)),
+        @Plan(trigger = @Trigger(goals = DumbPreyBDI.Go.class), body = @Body(DumbPreyMovePlan.class))
 })
 public class DumbPreyBDI extends BaseAgentBDI {
 
     // BELIEFS
-    @Belief
     @Getter
     @Setter
+    @Belief
     private ISpaceObject nearest_food;
 
     @Belief
     @Getter
     @Setter
+    private boolean onFood;
+
+    @Getter
+    @Setter
+    @Belief
     private String lastDirection;
 
     @AgentFeature
@@ -40,28 +49,76 @@ public class DumbPreyBDI extends BaseAgentBDI {
 
     @AgentBody
     public void body() {
-        agent.getComponentFeature(IBDIAgentFeature.class).dispatchTopLevelGoal(new Move());
+        agent.getComponentFeature(IBDIAgentFeature.class).dispatchTopLevelGoal(new Check());
     }
 
     // GOALS
 
-    @Goal(unique = true, excludemode = MProcessableElement.ExcludeMode.Never, deliberation = @Deliberation(inhibits = {Move.class}))
-    public static class Eat {
+    @Goal
+    public class Go
+    {
+        /** The position. */
+        @Getter
+        protected String dir;
 
-        @GoalCreationCondition//(rawevents = @RawEvent(value = ChangeEvent.FACTADDED, second = "nearest_food"))
-        public static boolean checkCreate(DumbPreyBDI outer, ISpaceObject garbage, ChangeEvent event) {
-            ISpaceObject spaceObject = outer.getMyself();
-            IVector2 pos = (IVector2) spaceObject.getProperty(Space2D.PROPERTY_POSITION);
-            ISpaceObject food = outer.getNearest_food();
-            IVector2 foodPos =  (IVector2)food.getProperty(Space2D.PROPERTY_POSITION);
-            System.out.println("Gonna trigger the eat plan!!!");
+        /**
+         *  Create a new Go.
+         */
+        public Go(String direction)
+        {
+            this.dir = direction;
+        }
 
-            boolean onFood = pos.equals(foodPos);
-            return outer.nearest_food != null && onFood;
+    }
+
+    @Goal(excludemode= MProcessableElement.ExcludeMode.Never, orsuccess = false)
+    public class Check
+    {
+    }
+
+
+    @Goal(unique = true)
+    public class Eat
+    {
+
+        /**
+         *  Get the hashcode.
+         */
+        public int hashCode()
+        {
+            return 31;
+        }
+
+        /**
+         *  Test if equal to other object.
+         */
+        public boolean equals(Object obj)
+        {
+            return obj instanceof Eat;
+        }
+
+        @GoalFinished
+        public void finished() {
+            System.out.println("Finished EAT");
         }
     }
 
-    @Goal(excludemode = MProcessableElement.ExcludeMode.Never, orsuccess = false)
-    public static class Move {
+    @Goal(deliberation = @Deliberation(inhibits ={Check.class, Go.class}))
+    public class TriggerFood{
+        @GoalDropCondition(beliefs = "onFood")
+        public boolean checkDrop() {
+            if(getNearest_food() == null) {
+                return true;
+            }
+            IVector2 foodPos = (IVector2)getNearest_food().getProperty(Space2D.PROPERTY_POSITION);
+            IVector2 pos = getPosition();
+            System.out.println("Trying to invalidate goal");
+            return !onFood || (!pos.equals(foodPos));
+        }
+
+        @GoalCreationCondition(beliefs = "onFood")
+        public TriggerFood(boolean onFood) {
+
+        }
     }
 }
