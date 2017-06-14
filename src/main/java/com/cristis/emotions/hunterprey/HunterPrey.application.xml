@@ -174,14 +174,14 @@
 					<env:property name="percepttypes">
 						new Object[]
 						{
-							new String[]{"food_seen", "add", "seen_food"},
-							new String[]{"food_seen", "add", "known_food"},
-							new String[]{"food_eaten", "remove", "seen_food"},
-							new String[]{"food_eaten", "remove", "known_food"},
-							new String[]{"food_out_of_sight", "remove", "seen_food"},
-							new String[]{"hunter_seen", "add", "seen_hunters"},
-							new String[]{"hunter_gone", "remove", "seen_hunters"},
-							new String[]{"prey_moved", "remove_outdated", "known_food"}
+							new String[]{"food_seen", "add", "seenFood"},
+							new String[]{"food_seen", "add", "knownFood"},
+							new String[]{"food_eaten", "remove", "seenFood"},
+							new String[]{"food_eaten", "remove", "knownFood"},
+							new String[]{"food_out_of_sight", "remove", "seenFood"},
+							new String[]{"hunter_seen", "add", "seenHunters"},
+							new String[]{"hunter_gone", "remove", "seenHunters"},
+							new String[]{"prey_moved", "remove_outdated", "knownFood"}
 						}
 					</env:property>
 				</env:perceptprocessor>
@@ -311,12 +311,35 @@
 
 	<componenttypes>
 		<componenttype name="DumbPrey" filename="com/cristis/emotions/hunterprey/dumbprey/DumbPreyBDI.class"/>
-		<componenttype name="CleverPrey" filename="com/cristis/emotions/hunterprey/cleverprey/CleverPrey.agent.xml"/>
+		<componenttype name="CleverPrey" filename="com/cristis/emotions/hunterprey/cleverprey/CleverPreyBDI.class"/>
 		<componenttype name="DumbHunter" filename="com/cristis/emotions/hunterprey/dumbhunter/DumbHunterBDI.class"/>
 		<componenttype name="LAHunter" filename="com/cristis/emotions/hunterprey/ldahunter/LAHunter.agent.xml"/>
 	</componenttypes>
 
 	<configurations>
+		<configuration name="OneSmartSheep">
+			<extensions>
+				<env:envspace name="my2dspace" type="2dspace">
+					<env:objects>
+						<env:object type="obstacle" number="125"/>
+					</env:objects>
+
+					<env:processes>
+						<env:process type="create">
+							<env:property name="tickrate">5</env:property>
+						</env:process>
+					</env:processes>
+
+					<env:observers>
+						<env:observer name="HunterPrey World" dataview="view_all" perspective="icons" />
+					</env:observers>
+				</env:envspace>
+			</extensions>
+			<components>
+				<component type="CleverPrey" name="SomeCleverSnek"/>
+				<component type="DumbHunter" name="Dumbo"/>
+			</components>
+		</configuration>
 		<configuration name="OneDumbSheepAndWolf">
 			<extensions>
 				<env:envspace name="my2dspace" type="2dspace">
@@ -365,7 +388,6 @@
 				<component type="DumbPrey" name="Dumbo"/>
 			</components>
 		</configuration>
-
 		<configuration name="Classic">
 			<extensions>
 				<env:envspace name="my2dspace" type="2dspace">

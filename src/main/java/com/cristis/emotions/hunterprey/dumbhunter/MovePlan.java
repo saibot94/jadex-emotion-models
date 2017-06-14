@@ -52,7 +52,6 @@ public class MovePlan {
             } else {
                 hunterBDI.setLastdir(Math.random() > 0.5 ? MoveAction.DIRECTION_LEFT : MoveAction.DIRECTION_RIGHT);
             }
-            System.out.println("Hunter moving: " + hunterBDI.getLastdir());
         }
         try {
             Map<String, Object> params = new HashMap<String, Object>();
