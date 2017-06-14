@@ -58,7 +58,7 @@ public class DumbHunterBDI extends BaseAgentBDI {
 
     }
 
-    @Goal(excludemode = MProcessableElement.ExcludeMode.Never)
+    @Goal
     public class Move {
     }
 

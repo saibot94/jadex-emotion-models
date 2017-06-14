@@ -25,15 +25,12 @@ public class CheckPlan {
 
     @PlanBody
     public void perform(){
-        System.out.println("Performing the CheckPlan");
         ISpaceObject myself = hunterBDI.getMyself();
         Grid2D grid2D = hunterBDI.getEnvironment();
         ISpaceObject food = hunterBDI.getNearestPrey();
         if (food != null && hunterBDI.getPosition().equals(food.getProperty(Space2D.PROPERTY_POSITION))) {
-            System.out.println("Hunter eating...");
             plan.dispatchSubgoal(hunterBDI.new Eat()).get();
         } else {
-            System.out.println("Hunter moving...");
             plan.dispatchSubgoal(hunterBDI.new Move()).get();
         }
     }
