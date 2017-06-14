@@ -353,6 +353,34 @@
 	</componenttypes>
 
 	<configurations>
+		<configuration name="Scenario">
+			<extensions>
+				<env:envspace name="my2dspace" type="2dspace">
+					<env:objects>
+						<env:object type="obstacle" number="125"/>
+					</env:objects>
+
+					<env:processes>
+						<env:process type="create">
+							<env:property name="tickrate">5</env:property>
+						</env:process>
+					</env:processes>
+
+					<env:observers>
+						<env:observer name="HunterPrey World" dataview="view_all" perspective="icons" />
+					</env:observers>
+				</env:envspace>
+			</extensions>
+			<components>
+				<component type="CleverPrey" name="SomeCleverSnek"/>
+				<component type="CleverPrey" name="SomeCleverSnek1"/>
+				<component type="DumbPrey" name="SomeCleverSnek2"/>
+				<component type="DumbPrey" name="SomeCleverSnek3"/>
+				<component type="DumbPrey" name="SomeCleverSnek4"/>
+				<component type="DumbHunter" name="Dumbo"/>
+				<component type="DumbHunter" name="Dumbo2"/>
+			</components>
+		</configuration>
 		<configuration name="OneSmartSheepDumbHunter">
 			<extensions>
 				<env:envspace name="my2dspace" type="2dspace">

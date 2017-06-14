@@ -38,9 +38,6 @@ public class DumbPreyEatPlan {
         IInternalAccess agent = dumbPrey.getAgent();
         IComponentDescription componentDescription = agent.getComponentDescription();
         ISpaceObject food = dumbPrey.getNearest_food();
-        System.out.println("Agent: " + agent);
-        System.out.println("Comp desc: " + componentDescription);
-        System.out.println("Food: " + food);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(ISpaceAction.ACTOR_ID, componentDescription);
         params.put(ISpaceAction.OBJECT_ID, food);

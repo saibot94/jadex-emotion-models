@@ -58,7 +58,7 @@ public class EatAction extends SimplePropertyObject implements ISpaceAction
 		{
 			points = points != null ? Integer.valueOf(points.intValue() + 1) : Integer.valueOf(1);
 		}
-		else if(avatar.getType().equals("hunter") && (avatar.getType().equals("prey") || avatar.getType().equals("cleverprey")))
+		else if(avatar.getType().equals("hunter") && (target.getType().equals("prey") || target.getType().equals("cleverprey")))
 		{
 			points = points != null ? Integer.valueOf(points.intValue() + 5) : Integer.valueOf(5);
 		}

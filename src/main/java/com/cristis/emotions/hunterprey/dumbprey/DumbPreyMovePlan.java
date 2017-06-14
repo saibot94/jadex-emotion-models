@@ -50,7 +50,7 @@ public class DumbPreyMovePlan {
         {
             // Move failed, forget about food and turn 90 degrees.
             dumbPrey.setNearest_food(null);
-            System.out.println("Move failed: "+e);
+            //System.out.println("Move failed: "+e);
             if(MoveAction.DIRECTION_LEFT.equals(goal.getDir()) || MoveAction.DIRECTION_RIGHT.equals(goal.getDir()))
             {
                 dumbPrey.setLastDirection(Math.random() > 0.5 ? MoveAction.DIRECTION_UP : MoveAction.DIRECTION_DOWN);
