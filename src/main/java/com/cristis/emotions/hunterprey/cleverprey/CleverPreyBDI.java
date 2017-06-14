@@ -31,17 +31,17 @@ public class CleverPreyBDI extends BaseAgentBDI {
 
     // BELIEFS
 
-    @Belief
+    @Belief(dynamic = true)
     @Getter
     @Setter
     private List<ISpaceObject> knownFood;
 
-    @Belief
+    @Belief(dynamic = true)
     @Getter
     @Setter
     private List<ISpaceObject> seenHunters;
 
-    @Belief
+    @Belief(dynamic = true)
     @Getter
     @Setter
     private List<ISpaceObject> seenFood = new ArrayList<>();
@@ -74,22 +74,25 @@ public class CleverPreyBDI extends BaseAgentBDI {
 
 
     // GOALS
-    @Goal(orsuccess = false)
+    @Goal(orsuccess = false, excludemode = MProcessableElement.ExcludeMode.Never)
     public class FoodSeen{
         @GoalMaintainCondition
         public boolean maintain() {
+            System.out.println("Maintain goal: " + (seenFood.size() > 0));
             return seenFood.size() > 0;
         }
     }
 
-    @Goal(unique = true, excludemode = MProcessableElement.ExcludeMode.Never)
+    @Goal(excludemode = MProcessableElement.ExcludeMode.Never, deliberation = @Deliberation(inhibits = {FoodSeen.class}))
     public class EatFood {
+        @Getter
+        @Setter
         private ISpaceObject food;
 
         @GoalCreationCondition(beliefs = "seenFood")
         public EatFood(ISpaceObject food) {
             this.food= food;
-            System.out.println("Gonna eat some food, constructor of goal! " + food);
+            System.out.println("Close foods: " + seenFood);
         }
 
         @GoalDropCondition

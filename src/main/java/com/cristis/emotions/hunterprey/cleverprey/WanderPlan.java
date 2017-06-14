@@ -42,12 +42,13 @@ public class WanderPlan {
         failed = false;
         // Turn 90 degrees with probability 0.25, otherwise continue moving in same direction.
         Set<ISpaceObject> nearObstacles = prey.getEnvironment().getNearGridObjects(prey.getPosition(), 1, new String[]{"obstacle"});
-        if (prey.getLastDirection() == null || computeObstacleInWay(nearObstacles) || failed || Math.random() > 0.8) {
+        if (prey.getLastDirection() == null || Math.random() > 0.8 || computeObstacleInWay(nearObstacles) || failed) {
             if (MoveAction.DIRECTION_LEFT.equals(prey.getLastDirection()) || MoveAction.DIRECTION_RIGHT.equals(prey.getLastDirection())) {
                 prey.setLastDirection(Math.random() > 0.5 ? MoveAction.DIRECTION_UP : MoveAction.DIRECTION_DOWN);
             } else {
                 prey.setLastDirection(Math.random() > 0.5 ? MoveAction.DIRECTION_LEFT : MoveAction.DIRECTION_RIGHT);
             }
+            System.out.println("Changed direction");
         }
         // Perform move action.
         try {
@@ -60,6 +61,7 @@ public class WanderPlan {
             fut.get();
 //				System.out.println("Moved (wander): "+lastdir+", "+getAgentName());
             failed = false;
+            System.out.println("Moved in the direction: " + prey.getLastDirection());
         } catch (RuntimeException e) {
 //				System.err.println("Wander plan failed: "+e);
             // Move failed, turn 90 degrees on next move.

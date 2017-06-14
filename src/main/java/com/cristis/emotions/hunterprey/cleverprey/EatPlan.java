@@ -1,6 +1,7 @@
 package com.cristis.emotions.hunterprey.cleverprey;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -35,17 +36,15 @@ public class EatPlan
 	 *  Plan body.
 	 */
 	@PlanBody
-	public void body()
+	public void body(CleverPreyBDI.EatFood goal)
 	{
 		Grid2D	env	= preyBDI.getEnvironment();
 		ISpaceObject	myself	= preyBDI.getMyself();
-		System.out.println("Gonna eat some food!");
-		ISpaceObject food = preyBDI.getSeenFood().parallelStream().sorted((a, b) -> {
+		System.out.println("Gonna eat some food: " + goal.getFood());
+		List<ISpaceObject> closeFoods = preyBDI.getSeenFood().parallelStream().sorted((a, b) -> {
 			boolean smaller = env.getDistance(preyBDI.getPosition(), ((IVector2) a.getProperty(Space2D.PROPERTY_POSITION))).getAsInteger() <
 					env.getDistance(preyBDI.getPosition(), (IVector2) b.getProperty(Space2D.PROPERTY_POSITION)).getAsInteger();
 			boolean equal = env.getDistance(preyBDI.getPosition(), ((IVector2) a.getProperty(Space2D.PROPERTY_POSITION))).getAsInteger() ==
-					env.getDistance(preyBDI.getPosition(), (IVector2) b.getProperty(Space2D.PROPERTY_POSITION)).getAsInteger();
-			boolean greater = env.getDistance(preyBDI.getPosition(), ((IVector2) a.getProperty(Space2D.PROPERTY_POSITION))).getAsInteger() ==
 					env.getDistance(preyBDI.getPosition(), (IVector2) b.getProperty(Space2D.PROPERTY_POSITION)).getAsInteger();
 			if(smaller) {
 				return -1;
@@ -54,48 +53,55 @@ public class EatPlan
 			} else {
 				return 1;
 			}
-		}).collect(Collectors.toList()).get(0);
+		}).collect(Collectors.toList());
 
-		try
-		{
-			// Move towards food until position reached.
-			while(!myself.getProperty(Space2D.PROPERTY_POSITION).equals(food.getProperty(Space2D.PROPERTY_POSITION)))
+		closeFoods.forEach(food -> {
+			try
 			{
-				String	move	= MoveAction.getDirection(env, (IVector2)myself.getProperty(Space2D.PROPERTY_POSITION),
-					(IVector2)food.getProperty(Space2D.PROPERTY_POSITION));
-				if(MoveAction.DIRECTION_NONE.equals(move))
-					throw new PlanFailureException();
+				// Move towards food until position reached.
+				while(!myself.getProperty(Space2D.PROPERTY_POSITION).equals(food.getProperty(Space2D.PROPERTY_POSITION)))
+				{
+					String	move	= MoveAction.getDirection(env, (IVector2)myself.getProperty(Space2D.PROPERTY_POSITION),
+							(IVector2)food.getProperty(Space2D.PROPERTY_POSITION));
+					if(MoveAction.DIRECTION_NONE.equals(move))
+						throw new PlanFailureException();
+					Map<String, Object> params = new HashMap<String, Object>();
+					params.put(ISpaceAction.ACTOR_ID, preyBDI.getAgent().getComponentDescription());
+					params.put(MoveAction.PARAMETER_DIRECTION, move);
+					Future<Void> fut = new Future<Void>();
+					env.performSpaceAction("move", params, new DelegationResultListener<Void>(fut));
+					fut.get();
+					System.out.println("CleverPrey: Moved towards food");
+//				System.out.println("Moved (eat): "+move+", "+getAgentName());
+				}
+
+				// Eat food.
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put(ISpaceAction.ACTOR_ID, preyBDI.getAgent().getComponentDescription());
-				params.put(MoveAction.PARAMETER_DIRECTION, move);
+				params.put(ISpaceAction.OBJECT_ID, food);
 				Future<Void> fut = new Future<Void>();
-				env.performSpaceAction("move", params, new DelegationResultListener<Void>(fut));
+				env.performSpaceAction("eat", params, new DelegationResultListener<Void>(fut));
 				fut.get();
-//				System.out.println("Moved (eat): "+move+", "+getAgentName());
-			}
-	
-			// Eat food.
-			Map<String, Object> params = new HashMap<String, Object>();
-			params.put(ISpaceAction.ACTOR_ID, preyBDI.getAgent().getComponentDescription());
-			params.put(ISpaceAction.OBJECT_ID, food);
-			Future<Void> fut = new Future<Void>();
-			env.performSpaceAction("eat", params, new DelegationResultListener<Void>(fut));
-			fut.get();
-//			System.out.println("Eaten (eat): "+food+", "+getAgentName());
-		}
-		catch(Exception e)
-		{
-//			System.err.println("Eat plan failed: "+e);
-			
-			// Move or eat failed, forget food until seen again.
-			// todo:
-
-			if(preyBDI.getKnownFood().contains(food))
-				preyBDI.getKnownFood().remove(food);
-			if(preyBDI.getSeenFood().contains(food))
+				System.out.println("Ate: " + food + "; Food present: " + preyBDI.getKnownFood().contains(food));
 				preyBDI.getSeenFood().remove(food);
+				preyBDI.getKnownFood().remove(food);
+//			System.out.println("Eaten (eat): "+food+", "+getAgentName());
+			}
+			catch(Exception e)
+			{
+//			System.err.println("Eat plan failed: "+e);
 
-			throw new PlanFailureException();
-		}
+				// Move or eat failed, forget food until seen again.
+				// todo:
+
+				if(preyBDI.getKnownFood().contains(food))
+					preyBDI.getKnownFood().remove(food);
+				if(preyBDI.getSeenFood().contains(food))
+					preyBDI.getSeenFood().remove(food);
+
+				System.out.println("Failed eat: " + e);
+				throw new PlanFailureException();
+			}
+		});
 	}
 }
