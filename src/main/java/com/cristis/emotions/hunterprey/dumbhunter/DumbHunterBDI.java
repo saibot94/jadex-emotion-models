@@ -55,7 +55,9 @@ public class DumbHunterBDI extends BaseAgentBDI {
 
     @Goal(unique = true)
     public class Eat {
-
+            public Eat(){
+                System.out.println("HUNTER: Eat goal created");
+            }
     }
 
     @Goal

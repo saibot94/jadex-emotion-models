@@ -27,6 +27,7 @@ public class EatPlan {
 
     @PlanBody
     public void perform() {
+        System.out.println("HUNTER: Performing eat action!");
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(ISpaceAction.ACTOR_ID, hunterBDI.getAgent().getComponentDescription());
         params.put(ISpaceAction.OBJECT_ID, hunterBDI.getNearestPrey());
