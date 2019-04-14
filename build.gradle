@@ -10,7 +10,8 @@ targetCompatibility = 1.8
 dependencies {
     compile 'org.activecomponents.jadex:jadex-distribution-standard:3.0.69'
     compile 'org.activecomponents.jadex:jadex-applib-bdi:3.0.69'
-    compile group: 'org.projectlombok', name: 'lombok', version:'1.14.8'
+    compileOnly 'org.projectlombok:lombok:1.18.6'
+	annotationProcessor 'org.projectlombok:lombok:1.18.6'
 }
 
 jar {
